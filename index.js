@@ -8,6 +8,7 @@ const log = document.querySelector("#array")
 const buttonRock = document.querySelector("#rock")
 const buttonPaper = document.querySelector("#paper")
 const buttonScissors = document.querySelector("#scissors")
+const buttonPredict = document.querySelector("#predict")
 const VIDEO_WIDTH = 720
 const VIDEO_HEIGHT = 405
 // video fallback
@@ -117,7 +118,6 @@ function logData(predictions) {
         str.push(predictions[0].landmarks[i][1])
     }
     log.innerHTML = str
-    classify(str)
     return str
 }
 
@@ -134,18 +134,19 @@ buttonScissors.addEventListener("click",  async () =>{
     const predictions = await model.estimateHands(video)
     Learn(logData(predictions), "scissors")
 })
+buttonPredict.addEventListener("click",  async () =>{
+    const predictions = await model.estimateHands(video)
+    let prediction = machine.classify(logData(predictions))
+    console.log(`I think it's a ${prediction}`)
+    document.querySelector("#prediction").innerHTML = `I think it's ${prediction}`
+    document.querySelector("#opponent").innerHTML = `Opponent plays ${opponent(prediction)}`
+
+})
 }
 
 function Learn(array, name){
     machine.learn(array, name)
     console.log(`${name}learned`)
-}
-
-function classify(str){
-    let prediction = machine.classify(str)
-    console.log(`I think it's a ${prediction}`)
-    document.querySelector("#prediction").innerHTML = `I think it's ${prediction}`
-    document.querySelector("#opponent").innerHTML = `Opponent plays ${opponent(prediction)}`
 }
 
 function opponent(prediction){
